@@ -37,7 +37,7 @@ public class AuthController {
         return userService.createUser(user);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody User user){
 
         UserPrincipal userPrincipal =
