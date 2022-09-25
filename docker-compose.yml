@@ -1,0 +1,23 @@
+version: '3'
+
+services: #Khởi tạo container
+    mysql: #tên container muốn khởi tạo
+        image: mysql #tên image tự pull trên docker hub để tạo container
+        environment: #set env (thuộc tính) cho container
+            - MYSQL_ROOT_PASSWORD=sapassword
+            - MYSQL_DATABASE=springjwt
+            - MYSQL_USER=admin
+            - MYSQL_PASSWORD=admin
+        volumes:
+            - mysql-data:/var/lib/mysql #bind mount 1 cái dường dẫn từ container mysql ra máy host có tên thư mục là 'mysql-data'
+            - ./script/springjwt.sql:/docker-entrypoint-initdb.d/init.sql #bind mount 1 tệp script vào entrypoint ảo của container mysql để tạo bảng & insert data mẫu
+    web:
+        image: jwt_th04:latest
+        ports:
+            - "8005:8080" #expose cổng 8080 của appSpringboot ra cổng host 8005 máy host
+        depends_on: #phải chạy dockerrun mysql trước
+            - mysql
+#web sẽ tự liên lạc vs mysql qua mạng nội bộ do docker-compose tạo ra nên ko cần expose cổng mysql
+#khi 'docker-compose up' sẽ tự tạo ra 1 khối network mặc định cho các khối services này
+volumes: #khai báo sử dụng volumes tên 'mysql-data'
+    mysql-data:
